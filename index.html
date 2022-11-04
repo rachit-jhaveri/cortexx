@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" type="x-icon" href="icon.jpeg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js" integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK" crossorigin="anonymous"></script>
+<!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+    <title>Cortex</title>
+    <style>
+        #myChart {
+  height: 100%;
+  width: 100%;
+  min-height: 100px;
+}
+ 
+.zc-ref {
+  display: none;
+}
+      table { 
+  width: 100%; 
+  border-collapse: collapse; 
+}
+/* Zebra striping */
+tr:nth-of-type(odd) { 
+  background: #eee; 
+}
+th { 
+  background: #333; 
+  color: white; 
+  font-weight: bold; 
+}
+td, th { 
+  padding: 6px; 
+  border: 1px solid #ccc; 
+  text-align: left; 
+}
+@media 
+only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+	/* Force table to not be like tables anymore */
+	table, thead, tbody, th, td, tr { 
+		display: block; 
+	}
+	
+	/* Hide table headers (but not display: none;, for accessibility) */
+	thead tr { 
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+	
+	tr { border: 1px solid #ccc; }
+	
+	td { 
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee; 
+		position: relative;
+		padding-left: 50%; 
+	}
+	
+	td:before { 
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%; 
+		padding-right: 10px; 
+		white-space: nowrap;
+	}
+    
+	/*
+	Label the data
+	*/
+	td:nth-of-type(1):before { content: "Parameter"; }
+	td:nth-of-type(2):before { content: "Measured Value"; }
+	td:nth-of-type(3):before { content: "Unit"; }
+    td:nth-of-type(4):before { content: "Reference Interval"; }
+}
+
+.content {
+  display: flex;
+}
+
+/* .mask {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  width: 12.5rem;
+  height: 6.25rem;
+  margin: 1.25rem;
+  object-fit: cover;
+} */
+
+/* .semi-circle {
+  position: relative;
+  display: block;
+  width: 12.5rem;
+  height: 6.25rem;
+  background: linear-gradient(to right, #1abc9c 0%, #f1c40f 50%, #c0392b 100%);
+  border-radius: 50% 50% 50% 50%/100% 100% 0% 0%;
+  object-fit: cover;
+}
+.semi-circle::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  z-index: 2;
+  display: block;
+  width: 8.75rem;
+  height: 4.375rem;
+  margin-left: -4.375rem;
+  background: #fff;
+  border-radius: 50% 50% 50% 50%/100% 100% 0% 0%;
+  object-fit: cover;
+}
+
+.semi-circle--mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12.5rem;
+  height: 12.5rem;
+  background: transparent;
+  transform: rotate(0deg) translate3d(0, 0, 0);
+  transform-origin: center center;
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+  transition: all 0.3s ease-in-out;
+  object-fit: cover;
+}
+.semi-circle--mask::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0%;
+  z-index: 2;
+  display: block;
+  width: 12.625rem;
+  height: 6.375rem;
+  margin: -1px 0 0 -1px;
+  background: #f2f2f2;
+  border-radius: 50% 50% 50% 50%/100% 100% 0% 0%;
+  object-fit: cover;
+}
+
+.gauge--1 .semi-circle {
+  background: #1abc9c;
+  object-fit: cover;
+}
+
+.gauge--2 .semi-circle {
+  background: #c0392b;
+  object-fit: cover;
+}
+.gauge--2 .semi-circle--mask {
+  transform: rotate(20deg) translate3d(0, 0, 0);
+  object-fit: cover;
+} */
+.semi-donut {
+  --percentage: 0;
+  --fill: rgb(255, 55, 0);
+  width: 300px;
+  height: 150px;
+  position: relative;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 600;
+  overflow: hidden;
+  color: var(--fill);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.semi-donut:after {
+  content: "";
+  width: 300px;
+  height: 300px;
+  border: 50px solid;
+  border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) var(--fill) var(--fill);
+  position: absolute;
+  border-radius: 50%;
+  left: 0;
+  top: 0;
+  box-sizing: border-box;
+  transform: rotate(calc(1deg * (-45 + var(--percentage) * 1.8)));
+  -webkit-animation: fillAnimation 1s ease-in;
+          animation: fillAnimation 1s ease-in;
+}
+
+
+
+@-webkit-keyframes fillAnimation {
+  0% {
+    transform: rotate(100deg);
+  }
+  50% {
+    transform: rotate(135deg);
+  }
+}
+
+@keyframes fillAnimation {
+  0% {
+    transform: rotate(100deg);
+  }
+  50% {
+    transform: rotate(135deg);
+  }
+}
+@-webkit-keyframes fillGraphAnimation {
+  0% {
+    transform: rotate(90deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+}
+@keyframes fillGraphAnimation {
+  0% {
+    transform: rotate(90deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+}
+.exam { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    text-align: center;
+}
+      @media screen and (min-width: 601px) {
+  div.example {
+    font-size: 80px;
+  }
+}
+@media screen and (min-width:1000px){
+    #div{
+    margin-left: 50vw;
+  } 
+}
+/* @media screen and(max-width:1000px){
+    #div{
+    display: flex;
+    flex-direction:column;
+    flex-wrap: wrap;
+}
+} */
+@media screen and (max-width: 600px) {
+  div.example {
+    font-size: 30px;
+  }
+}
+@media screen and (max-width: 450px) {
+  .mint {
+    padding-left:2px;
+  }
+}
+.container-fluid {
+  border: 1px solid black;
+}
+
+.col-xs-7 {
+  border: 1px solid black;
+}
+input[type="text"]:focus{
+     box-shadow: 0 0 0 rgb(255, 255, 255);
+}
+    </style>
+    
+</head>
+<body>
+  <h1 id="msg"></h1>
+  <div class="example">
+     <div style="font-size:4vw;margin-bottom: 60px;color:rgb(85, 0, 255)" class="exam my-3">REMORPHOSIS</div>
+  </div>
+    <div class="container my-3">
+      <form  method="POST">
+        <div class="row g-2">
+            <div class="col-md">
+              <div class="form-floating">
+                <input class="form-control" id="name" name="name" placeholder="name">
+                <label for="name">Patient Name</label>
+              </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                  <input class="form-control" id="age" name="age" placeholder="age">
+                  <label for="age">Age</label>
+                </div>
+              </div>
+              <div class="col-md">
+                <div class="form-floating">
+                  <select class="form-select" id="gender" name="gender" placeholder="gender" >
+                    <option selected>Open this menu</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Others">Others</option>
+                  </select>
+                  <label for="gender">Gender</label>
+                </div>
+              </div>
+          </div>
+          <div class="text-center" style="margin-top:40px">
+              <div>
+                <h1 id="important"><time>00:00:00</time></h1>
+                <!-- <button type="button" id="start">start</button>
+                <button type="button" id="stop">stop</button>
+                <button type="button" id="clear">clear</button> -->
+            </div>
+            <div class="row">
+            <div class="my-3">
+               <input type="text" id="text1" name="text1" oninput="add_number()" placeholder="A">
+                 <input type="text" id="text2" name="text2" oninput="add_number()" placeholder="B">
+            </div>
+            <div class="container-fluid my-3">
+  
+                <div class="row" style="display: flex;justify-content: flex-end;">
+                  <div class="col-xs-7 col-xs-offset" style="height:50px;width:40vw;">
+                    Signal 1
+                  </div>
+                </div>
+                
+                <div class="row" style="display: flex;justify-content: flex-end;">
+                  <div class="col-xs-7 col-xs-offset" style="height:50px;width:40vw">
+                    Signal 1
+                  </div>
+                </div>
+                
+                <div class="row" style="display: flex;justify-content: flex-end;">
+                  <div class="col-xs-7 col-xs-offset" style="height:50px;width:40vw">
+                    Signal 2
+                  </div>
+                </div>
+                
+                <div class="row" style="display: flex;justify-content: flex-end;">
+                  <div class="col-xs-7 col-xs-offset" style="height:50px;width:40vw">
+                    Signal 3
+                  </div>
+                </div>
+                <div class="row" style="display: flex;justify-content: flex-end;">
+                    <div class="col-xs-7 col-xs-offset" style="height:50px;width:40vw">
+                        Signal 4
+                    </div>
+                  </div>
+                  <div class="row" style="display: flex;justify-content: flex-end;">
+                    <div class="col-xs-7 col-xs-offset" style="height:50px;width:40vw">
+                        Signal 5
+                    </div>
+                  </div>
+                  <div class="row" style="display: flex;justify-content: flex-end;">
+                    <div class="col-xs-7 col-xs-offset" style="height:50px;width:40vw">
+                        Signal 6
+                    </div>
+                  </div>
+              </div>
+              <div>
+                <table>
+                  <thead>
+                  <tr>
+                    <div class="want">
+                        <div class="new">
+                            <th class="text-center">Parameter</th>
+                            <th class="text-center">Measured value</th>
+                    </div>
+                       <div class="old">
+                        <th class="text-center">Unit</th>
+                        <th class="text-center">Reference Interval</th>
+                    </div>
+                    </div>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <div class="want">
+                    <div class="new">
+                    <td class="text-center">DELTA</td>
+                    <td class="text-center" ><input type="text" id="txtresult1" name="txtresult1" style="width:18vw" disabled="disabled" ></td>
+                </div>
+                   <div class="old">
+                    <td class="text-center">%</td>
+                    <td class="text-center">10.2-15</td>
+                </div>
+            </div>
+                  </tr>
+                  <tr>
+                    <div class="want">
+                        <div class="new">
+                        <td class="text-center">THETA</td>
+                        <td class="text-center" ><input type="text" id="txtresult2" name="txtresult2" style="width:18vw" disabled="disabled"></td>
+                    </div>
+                       <div class="old">
+                        <td class="text-center">%</td>
+                        <td class="text-center">10.2-15</td>
+                    </div>
+                </div>
+                  </tr>
+                  <tr>
+                    <div class="want">
+                        <div class="new">
+                        <td class="text-center">ALPHA</td>
+                        <td class="text-center" ><input type="text" id="txtresult3" name="txtresult3" style="width:18vw" disabled="disabled"></td>
+                    </div>
+                       <div class="old">
+                        <td class="text-center">%</td>
+                        <td class="text-center">10.2-15</td>
+                    </div>
+                </div>
+                  </tr>
+                  <tr>
+                    <div class="want">
+                        <div class="new">
+                        <td class="text-center">BETA</td>
+                        <td class="text-center" ><input type="text" id="txtresult4" name="txtresult4" style="width:18vw" disabled="disabled"></td>
+                    </div>
+                       <div class="old">
+                        <td class="text-center">%</td>
+                        <td class="text-center">10.2-15</td>
+                    </div>
+                </div>
+                  </tr>
+                  <tr>
+                    <div class="want">
+                        <div class="new">
+                        <td class="text-center">DAR</td>
+                        <td class="text-center" ><input type="text" id="txtresult5" name="txtresult5" style="width:18vw" disabled="disabled"></td>
+                    </div>
+                       <div class="old">
+                        <td class="text-center">%</td>
+                        <td class="text-center">10.2-15<br>normal<br>hii</td>
+                    </div>
+                </div>
+                  </tr>
+                  <tr>
+                    <div class="want">
+                        <div class="new">
+                        <td class="text-center">DTABR</td>
+                        <td class="text-center" ><input type="text" id="txtresult6" name="txtresult6" style="width:18vw" disabled="disabled"></td>
+                    </div>
+                       <div class="old">
+                        <td class="text-center">%</td>
+                        <td class="text-center">10.2-15<br>normal<br>hii</td>
+                    </div>
+                </div>
+                  </tr>
+                  <tr>
+                    <div class="want">
+                        <div class="new">
+                        <td class="text-center">pdBSI</td>
+                        <td class="text-center" ><input type="text" id="txtresult7" name="txtresult7" style="width:18vw" disabled="disabled"></td>
+                    </div>
+                       <div class="old">
+                        <td class="text-center">%</td>
+                        <td class="text-center">10.2-15<br>normal<br>hii</td>
+                    </div>
+                </div>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="my-3">
+                <div id="meter">
+                <div class="float-start">
+                  <p>Conclusion:</p>
+                </div>
+                <div style="float: left; width: 20vw;">
+                  <textarea style="width: 100%; max-width: 100%;" id="conclusion" name="conclusion" disabled="disabled"></textarea>
+                </div>
+                <div class="semi-donut margin" 
+                style="--percentage :0%; --fill: #FF3D00 ;" id="div">0
+           </div>
+        </div>
+                <div class="my-3">
+                    <div class="float-start">
+                      <p>References:</p><br>
+                    </div>
+                    <div style="float: left">
+                      <p>1.Enter your references</p>
+                      <p>2.Enter your references</p>
+                      <p>3.Enter your references</p>
+                      <p>4.Enter your references</p>
+                      <p>5.Enter your references</p>
+                      <p>6.Enter your references</p>
+                      <p>7.Enter your references</p>
+                    </div>
+                  </div><br><br><br><br><br><br><br><br><br><br><br>
+                  <div class="my-3">
+                    <div class="float-start">
+                      <p>Clinical observations:</p>
+                    </div>
+                    <div class="textarea-container">
+                        <textarea class="auto-resize" id="clinical" name="clinical" placeholder="Enter Text Here..." style="float: left; width: 85%;">
+                        </textarea>
+                    </div>
+                  </div>
+              </div>
+              <div>
+                <button type="button" style="width: 20%; float: right; margin:30px;margin-left:20px;font-size:20px" class="btn btn-primary" onclick="window.print()">Print</button>
+                <input type="submit" id="sub" class="btn btn-primary mint" style="width: 20%; float: right; margin:30px;font-size:20px">
+                <!-- <button type="submit">Send</button> -->
+              </div>
+              
+    </div>
+    </div>
+  </form>
+    <script>
+      let form = document.querySelector("form");
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.querySelector("#sub").value = "Submit";
+            let data = new FormData(form);
+            fetch('https://script.google.com/macros/s/AKfycbzuPo-GLhgGKK2fqCNYGEpw78Tm1l0GGYvyD-zf-jPaQZ1KuwrY0L6dzs6GhbLzv7M0/exec', {
+                    method: "POST",
+                    body: data
+                })
+                .then(res => res.text())
+                .then(data => {
+                    document.querySelector("#msg").innerHTML = "";
+                    document.querySelector("#sub").value = "Submit"
+                    window.alert('your data has been submitted');
+                });
+        })
+      var text1 = document.getElementById("text1");
+      var text2 = document.getElementById("text2");
+      // var first_number = parseFloat(text1.value);
+      // var second_number = parseFloat(text2.value);
+      // let result = first_number + second_number;
+      function add_number() {
+   var first_number = parseFloat(text1.value);
+   if (isNaN(first_number)) first_number = 0;
+   var second_number = parseFloat(text2.value);
+   if (isNaN(second_number)) second_number = 0;
+   let result = first_number + second_number;
+   document.getElementById("txtresult1").value = result;
+   document.getElementById("txtresult2").value = result;
+   document.getElementById("txtresult3").value = result;
+   document.getElementById("txtresult4").value = result;
+   document.getElementById("txtresult5").value = result;
+   document.getElementById("txtresult6").value = result;
+   document.getElementById("txtresult7").value = result;
+   if(result<=10){
+    document.getElementById("conclusion").innerHTML="LOW"
+   }
+   else if(result>10 && result<=20){
+    document.getElementById("conclusion").innerHTML="Normal"
+   }
+   else if(result>20 && result<=30){
+    document.getElementById("conclusion").innerHTML="High"
+   }
+   else{
+    document.getElementById("conclusion").innerHTML="Very High"
+   }
+   var div = document.getElementById("div");
+div.setAttribute("style",`--percentage:${result}`);
+document.getElementById("div").innerHTML=`${result}%`;
+}
+var h = document.getElementById('important'),
+    start = document.getElementById('start'),
+    Stop = document.getElementById('stop'),
+    clear = document.getElementById('clear'),
+    seconds = 0, minutes = 0, hours = 0,
+    t;
+
+function add() {
+    seconds++;
+    if (seconds >= 60) {
+        seconds = 0;
+        minutes++;
+        if (minutes >= 60) {
+            minutes = 0;
+            hours++;
+        }
+    }
+    
+    h.textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+
+    timer();
+}
+function timer() {
+    t = setTimeout(add, 1000);
+}
+
+/* Start button */
+start.onclick = timer;
+
+/* Stop button */
+Stop.onclick = function() {
+    clearTimeout(t);
+}
+
+/* Clear button */
+clear.onclick = function() {
+    h.textContent = "00:00:00";
+    seconds = 0; minutes = 0; hours = 0;
+}
+var multipleFields=document.querySelectorAll('.auto-resize');
+for(var i=0; i<multipleFields.length; i++){
+multipleFields[i].addEventListener('input',autoResizeHeight,0);
+}
+// auto resize multiple textarea
+function autoResizeHeight(){
+  this.style.height="auto";
+  this.style.height= this.scrollHeight+"px";
+  this.style.borderColor="black";
+}
+
+    </script>
+</body>
+</html>
